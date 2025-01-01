@@ -1,13 +1,27 @@
 package main
 
-import "url-shortener/internal/utils/logging"
+import (
+	"fmt"
+	"os"
+	"url-shortener/internal/config"
+	"url-shortener/internal/utils/logging"
+
+	"github.com/joho/godotenv"
+)
 
 func main() {
-	// TODO: конфиг
+	if err := godotenv.Load("../../.env"); err != nil {
+		fmt.Println("Ошибка загрузки .env файла:", err)
+		os.Exit(1)
+	}
 
-	// TODO: логгер
-	logger := logging.SetupLogger()
-	logger.Info("The logger has been successfully initialized")
+	// конфиг
+	cfg := config.MustLoad()
+	fmt.Println(cfg)
+
+	// логгер
+	logging.SetupLogger()
+	logging.Logger.Info("The logger has been successfully initialized")
 
 	// TODO: база данных
 
