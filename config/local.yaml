@@ -1,5 +1,5 @@
 env: "local" # может быть dev, prod
-db_url: "postgres://postgres:123456@127.0.0.1:5432/dummy" # TODO: заменить на реальный
+db_url: "postgres://postgres:3141592653@localhost:5432/urlShortenerDB"
 http_server:
   address: "localhost:8082"
   timeout: 4s # время на чтение запроса и такое же время на отправку ответа

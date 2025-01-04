@@ -20,20 +20,30 @@ type HTTPServer struct {
 	IdleTimeput time.Duration `yaml:"idle_timeout" env-default:"60s"`
 }
 
+var (
+	CurrentConfig *Config
+)
+
+// TODO: прокидывать подключение к БД через ENV
 func MustLoad() *Config {
 	configPath := os.Getenv("PATH_CONFIG")
 	if configPath == "" {
 		logging.Logger.Fatal("PATH_CONFIG is not set")
 	}
 
+	// dbURL := os.Getenv("DB_URL")
+	// if dbURL == "" {
+	// 	logging.Logger.Fatal("DB_URL is not set")
+	// }
+
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		logging.Logger.WithField("configPath", configPath).Fatal("config file does not exist")
 	}
 
-	var config Config
-	if err := cleanenv.ReadConfig(configPath, &config); err != nil {
+	CurrentConfig = &Config{}
+	if err := cleanenv.ReadConfig(configPath, CurrentConfig); err != nil {
 		logging.Logger.WithField("error", err).Fatal("cannot read file")
 	}
 
-	return &config
+	return CurrentConfig
 }
