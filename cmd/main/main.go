@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"url-shortener/internal/config"
+	"url-shortener/internal/utils/db"
 	"url-shortener/internal/utils/logging"
 
 	"github.com/joho/godotenv"
@@ -23,7 +24,12 @@ func main() {
 	logging.SetupLogger()
 	logging.Logger.Info("The logger has been successfully initialized")
 
-	// TODO: база данных
+	postgresDB, err := db.ConnnectToPgx()
+	if err != nil {
+		logging.Logger.Error("error connecting to PostgreSQL: ", err)
+		return
+	}
+	defer postgresDB.Close()
 
 	// TODO: роутер
 
