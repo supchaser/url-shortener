@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"url-shortener/internal/pkg/config"
+	"url-shortener/internal/pkg/shortener/repository"
 	"url-shortener/internal/pkg/utils/db"
 	"url-shortener/internal/pkg/utils/logging"
 
@@ -30,6 +32,15 @@ func main() {
 		return
 	}
 	defer postgresDB.Close()
+
+	repoShortener := repository.CreateShortenerRepository(postgresDB)
+	urlStruct, err := repoShortener.SaveURL(context.Background(), "https://google.com", "google")
+	if err != nil {
+		logging.Logger.Error("error saving URL: ", err)
+		return
+	}
+
+	fmt.Printf("URL has been saved: %+v\n", urlStruct)
 
 	// TODO: роутер
 
