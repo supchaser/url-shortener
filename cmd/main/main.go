@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
-	"url-shortener/internal/config"
-	"url-shortener/internal/utils/db"
-	"url-shortener/internal/utils/logging"
+	"url-shortener/internal/pkg/config"
+	"url-shortener/internal/pkg/utils/db"
+	"url-shortener/internal/pkg/utils/logging"
 
 	"github.com/joho/godotenv"
 )

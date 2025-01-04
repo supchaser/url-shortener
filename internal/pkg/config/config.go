@@ -3,7 +3,7 @@ package config
 import (
 	"os"
 	"time"
-	"url-shortener/internal/utils/logging"
+	"url-shortener/internal/pkg/utils/logging"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )

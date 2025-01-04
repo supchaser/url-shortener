@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"time"
-	"url-shortener/internal/config"
-	"url-shortener/internal/utils/logging"
+	"url-shortener/internal/pkg/config"
+	"url-shortener/internal/pkg/utils/logging"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
