@@ -2,9 +2,13 @@ package repository
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"url-shortener/internal/models"
 	"url-shortener/internal/pkg/utils/logging"
 	"url-shortener/internal/pkg/utils/pgxiface"
+
+	"github.com/jackc/pgx/v5"
 )
 
 type ShortenerRepository struct {
@@ -30,13 +34,48 @@ func (r *ShortenerRepository) SaveURL(ctx context.Context, urlToSave string, ali
 
 	logging.Logger.Debugf("%s query has err: %v", funcName, err)
 
-	return newURLStruct, nil
+	return newURLStruct, err
 }
 
-func (r *ShortenerRepository) GetURL() {
-	panic("Not implemented")
+func (r *ShortenerRepository) GetURL(ctx context.Context, alias string) (*models.URLStruct, error) {
+	funcName := "GetURL"
+	query := `SELECT id, url, alias FROM url WHERE alias=$1;`
+	row := r.db.QueryRow(ctx, query, alias)
+	url := &models.URLStruct{}
+	err := row.Scan(
+		&url.ID,
+		&url.URL,
+		&url.Alias,
+	)
+
+	logging.Logger.Debugf("%s with alias='%s' query has error: %v", funcName, alias, err)
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, fmt.Errorf("%s: no rows found: %w", funcName, err)
+		}
+		return nil, fmt.Errorf("%s: scanning error: %w", funcName, err)
+	}
+
+	return url, nil
 }
 
-func (r *ShortenerRepository) DeleteURL() {
-	panic("Not implemented")
+func (r *ShortenerRepository) DeleteURL(ctx context.Context, alias string) (err error) {
+	funcName := "DeleteURL"
+	if alias == "" {
+		return fmt.Errorf("%s: alias is empty", funcName)
+	}
+
+	query := `DELETE FROM url WHERE alias=$1;`
+	url, err := r.db.Exec(ctx, query, alias)
+	if url.RowsAffected() == 0 {
+		return fmt.Errorf("%s: not found", funcName)
+	}
+
+	logging.Logger.Debugf("%s query has error: %v", funcName, err)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
