@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"os"
 	"url-shortener/internal/pkg/config"
+	mlog "url-shortener/internal/pkg/middleware/logging"
 	"url-shortener/internal/pkg/shortener/repository"
 	"url-shortener/internal/pkg/utils/db"
 	"url-shortener/internal/pkg/utils/logging"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
 )
 
@@ -42,7 +45,13 @@ func main() {
 
 	fmt.Printf("URL has been saved: %+v\n", urlStruct)
 
-	// TODO: роутер
+	router := chi.NewRouter()
+
+	router.Use(middleware.RequestID)
+	// router.Use(middleware.Logger) можно как альтернатива самописному
+	router.Use(mlog.NewLogrusLogger())
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.URLFormat)
 
 	// TODO: run server
 }
