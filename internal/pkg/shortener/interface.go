@@ -6,5 +6,7 @@ import (
 )
 
 type ShortenerRepository interface {
-	SaveURL(ctx context.Context, urlToSave string, alias string) (newURLStruct models.URLStruct, err error)
+	SaveURL(ctx context.Context, urlToSave string, alias string) (*models.URLStruct, error)
+	GetURL(ctx context.Context, alias string) (*models.URLStruct, error)
+	DeleteURL(ctx context.Context, alias string) (err error)
 }

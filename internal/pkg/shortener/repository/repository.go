@@ -21,12 +21,13 @@ func CreateShortenerRepository(db pgxiface.PgxIface) *ShortenerRepository {
 	}
 }
 
-func (r *ShortenerRepository) SaveURL(ctx context.Context, urlToSave string, alias string) (newURLStruct models.URLStruct, err error) {
+func (r *ShortenerRepository) SaveURL(ctx context.Context, urlToSave string, alias string) (*models.URLStruct, error) {
 	funcName := "SaveURL"
 	query := `INSERT INTO url (url, alias)
 			VALUES ($1, $2) RETURNING id, url, alias;`
 
-	err = r.db.QueryRow(ctx, query, urlToSave, alias).Scan(
+	newURLStruct := &models.URLStruct{}
+	err := r.db.QueryRow(ctx, query, urlToSave, alias).Scan(
 		&newURLStruct.ID,
 		&newURLStruct.URL,
 		&newURLStruct.Alias,
